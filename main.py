@@ -74,6 +74,12 @@ def main():
 
     args = parser.parse_args()
 
+    if args.channel is not None:
+        args.channel = args.channel.strip()
+        if not args.channel:
+            rprint("[red]CHANNEL_URL khali hai. GitHub Secret ya input check karein.[/red]")
+            sys.exit(1)
+
     # --- Validate ---
     if args.max_check < 1:
         rprint("[red]--max-check must be >= 1[/red]")
@@ -98,6 +104,9 @@ def main():
         sys.exit(130)
     except Exception as e:
         rprint(f"\n[bold red]❌ Pipeline failed:[/bold red] {e}")
+        stderr = getattr(e, "stderr", None)
+        if stderr:
+            print(stderr.decode(errors="ignore")[-3000:])
         raise
 
 
