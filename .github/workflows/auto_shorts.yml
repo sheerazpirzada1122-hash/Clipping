@@ -36,6 +36,9 @@ jobs:
           pip install --no-build-isolation openai-whisper==20231117
           pip install -r requirements.txt
 
+      - name: Update yt-dlp to latest
+        run: pip install -U --pre "yt-dlp[default]"
+
       - name: Cache Whisper models
         uses: actions/cache@v4
         with:
