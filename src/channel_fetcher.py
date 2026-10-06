@@ -2,8 +2,11 @@
 Fetch video list from a YouTube channel using yt-dlp.
 No API key needed — works with public channels.
 """
+import os
+from datetime import datetime, timezone
 from typing import List, Dict
 import yt_dlp
+from src.config import YT_COOKIES_FILE
 
 
 def fetch_channel_videos(channel_url: str, max_videos: int = 30) -> List[Dict]:
@@ -28,6 +31,8 @@ def fetch_channel_videos(channel_url: str, max_videos: int = 30) -> List[Dict]:
         "playlistend": max_videos,
         "skip_download": True,
     }
+    if YT_COOKIES_FILE and os.path.exists(YT_COOKIES_FILE):
+        ydl_opts["cookiefile"] = YT_COOKIES_FILE
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(channel_url, download=False)
@@ -36,13 +41,18 @@ def fetch_channel_videos(channel_url: str, max_videos: int = 30) -> List[Dict]:
     for entry in info.get("entries", []):
         if not entry:
             continue
+        upload_date = entry.get("upload_date") or ""
+        if not upload_date and entry.get("timestamp"):
+            upload_date = datetime.fromtimestamp(
+                entry["timestamp"], tz=timezone.utc
+            ).strftime("%Y%m%d")
         videos.append({
             "id": entry.get("id"),
             "title": entry.get("title", ""),
             "url": f"https://www.youtube.com/watch?v={entry.get('id')}",
             "views": entry.get("view_count") or 0,
             "duration": entry.get("duration") or 0,
-            "upload_date": entry.get("upload_date") or "",
+            "upload_date": upload_date,
             "channel": info.get("channel") or info.get("uploader") or "",
         })
 
