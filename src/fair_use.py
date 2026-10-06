@@ -21,10 +21,10 @@ def apply_speed_and_pitch(input_path: str, output_path: str,
     pitch_ratio = 2 ** (semitones / 12.0)
 
     audio_filter = (
+        f"aresample=44100,"
         f"asetrate=44100*{pitch_ratio},"
         f"aresample=44100,"
-        f"atempo={speed / pitch_ratio:.5f},"
-        f"atempo=1.0"
+        f"atempo={speed / pitch_ratio:.5f}"
     )
 
     (
