@@ -4,7 +4,7 @@ Download YouTube videos or accept local files.
 import os
 import yt_dlp
 from pathlib import Path
-from src.config import OUTPUT_DIR
+from src.config import OUTPUT_DIR, YT_COOKIES_FILE
 
 
 def download_youtube(url: str, output_dir: Path = OUTPUT_DIR) -> str:
@@ -21,11 +21,13 @@ def download_youtube(url: str, output_dir: Path = OUTPUT_DIR) -> str:
         "no_warnings": True,
         "noplaylist": True,
     }
+    if YT_COOKIES_FILE and os.path.exists(YT_COOKIES_FILE):
+        ydl_opts["cookiefile"] = YT_COOKIES_FILE
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         video_id = info["id"]
-        creator = info.get("uploader", "Unknown")
+        creator = info.get("uploader") or info.get("channel") or "Unknown"
         title = info.get("title", "")
 
     # Find the downloaded file
