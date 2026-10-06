@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load .env file if present (local development)
 load_dotenv()
 
 # --- Paths ---
@@ -13,8 +14,11 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 ASSETS_DIR = ROOT_DIR / "assets"
 OUTPUT_DIR = ROOT_DIR / "output"
 BROLL_DIR = ASSETS_DIR / "broll"
-FONT_PATH = ASSETS_DIR / "fonts" / "Montserrat-ExtraBold.ttf"
 
+# 👇 Font path — tumhari uploaded font file ke exact naam ke saath
+FONT_PATH = ASSETS_DIR / "fonts" / "Montserrat Extra Bold.otf"
+
+# Create output directory if it doesn't exist
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # --- Video settings ---
