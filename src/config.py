@@ -16,7 +16,7 @@ OUTPUT_DIR = ROOT_DIR / "output"
 BROLL_DIR = ASSETS_DIR / "broll"
 
 # 👇 Font path — tumhari uploaded font file ke exact naam ke saath
-FONT_PATH = ASSETS_DIR / "fonts" / "Montserrat Extra Bold.otf"
+FONT_PATH = ASSETS_DIR / "fonts" / "Montserrat Extra Bold.ttf"
 
 # Create output directory if it doesn't exist
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -37,6 +37,9 @@ WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
 YT_CLIENT_SECRET_FILE = os.getenv("YT_CLIENT_SECRET", "client_secret.json")
 YT_REFRESH_TOKEN = os.getenv("YT_REFRESH_TOKEN", "")
 YT_TOKEN_FILE = OUTPUT_DIR / "yt_token.json"
+
+# --- yt-dlp cookies (optional, GitHub IP block hone par kaam aate hain) ---
+YT_COOKIES_FILE = os.getenv("YT_COOKIES_FILE", "")
 
 # --- OpenAI (optional, for metadata generation) ---
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
