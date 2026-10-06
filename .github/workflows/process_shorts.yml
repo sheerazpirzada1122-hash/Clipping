@@ -38,17 +38,28 @@ jobs:
           path: ~/.cache/whisper
           key: whisper-base
 
+      # 👇 YEH STEP ZAROORI HAI — secret se JSON file banata hai
+      - name: Create client_secret.json from secret
+        env:
+          YT_CLIENT_SECRET_JSON: ${{ secrets.YT_CLIENT_SECRET }}
+        run: |
+          echo "$YT_CLIENT_SECRET_JSON" > client_secret.json
+          ls -la client_secret.json
+
       - name: Run pipeline
         env:
-          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          WHISPER_MODEL:    base
+          YT_CLIENT_SECRET: client_secret.json
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python main.py --source "${{ github.event.inputs.source_url }}" \
+          python main.py \
+            --source "${{ github.event.inputs.source_url }}" \
             ${{ github.event.inputs.upload == 'true' && '--upload' || '' }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: shorts-output
           path: output/*.mp4
+          if-no-files-found: warn
