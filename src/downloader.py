@@ -20,6 +20,7 @@ def download_youtube(url: str, output_dir: Path = OUTPUT_DIR) -> str:
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,
+        "source_address": "0.0.0.0",  # sirf IPv4 use karo (GitHub runner par IPv6 nahi chalta)
         "retries": 5,
         "extractor_retries": 5,
         # Node.js GitHub runner par pehle se installed hai; YouTube challenge solve karne ke liye
