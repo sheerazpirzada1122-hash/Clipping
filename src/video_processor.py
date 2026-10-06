@@ -65,18 +65,24 @@ def add_progress_bar(input_path: str, output_path: str,
                      duration: float) -> str:
     """
     Add a thin animated progress bar at the bottom of the frame.
-    Uses the `drawbox` filter with a time-based width expression.
+    Bar ki speed video ki asli length (speed-up ke baad) se nikalti hai,
+    taake bar video ke end par bilkul full ho.
     """
+    real_duration = float(ffmpeg.probe(input_path)["format"]["duration"])
     bar_h = 12
     y = TARGET_HEIGHT - bar_h - 20
-    vf = (
-        f"drawbox=x=0:y={y}:w='iw*t/{duration:.3f}':h={bar_h}:"
-        f"color=yellow@0.9:t=fill"
+
+    video_in = ffmpeg.input(input_path)
+    bar = ffmpeg.input(
+        f"color=c=yellow:s={TARGET_WIDTH}x{bar_h}:r={TARGET_FPS}", f="lavfi"
+    )
+    video = ffmpeg.overlay(
+        video_in.video, bar,
+        x=f"-w+w*t/{real_duration:.3f}", y=y, eval="frame", shortest=1,
     )
     (
         ffmpeg
-        .input(input_path)
-        .output(output_path, vf=vf,
+        .output(video, video_in.audio, output_path,
                 **{"c:v": "libx264", "c:a": "copy", "preset": "medium"})
         .overwrite_output()
         .run(quiet=True)
@@ -90,9 +96,9 @@ def add_dynamic_zoom(input_path: str, output_path: str,
     Add subtle dynamic zoom pulses every ~4 seconds using zoompan.
     Creates visual 'hooks' to retain viewer attention.
     """
-    # zoompan with a sinusoidal-ish zoom between 1.0 and 1.08
+    # zoompan: sinusoidal zoom pulse (1.0 -> 1.08), har 120 frames (~4s) mein
     vf = (
-        "zoompan=z='min(zoom+0.0008,1.08)':"
+        "zoompan=z='1+0.04*(1-cos(2*PI*on/120))':"
         "d=1:"
         "x='iw/2-(iw/zoom/2)':"
         "y='ih/2-(ih/zoom/2)':"
