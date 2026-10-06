@@ -1,0 +1,27 @@
+# Core
+python-dotenv==1.0.1
+pydantic==2.7.1
+rich==13.7.1
+
+# Video / Audio
+moviepy==1.0.3
+ffmpeg-python==0.2.0
+yt-dlp==2024.8.6
+opencv-python==4.10.0.84
+numpy==1.26.4
+Pillow==10.3.0
+imageio-ffmpeg==0.4.9
+
+# Transcription
+openai-whisper==20231117
+torch==2.3.1
+torchaudio==2.3.1
+
+# YouTube
+google-api-python-client==2.137.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
+
+# Captions
+ass==0.5.0
+pysubs2==1.7.0
