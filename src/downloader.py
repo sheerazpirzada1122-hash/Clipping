@@ -20,6 +20,11 @@ def download_youtube(url: str, output_dir: Path = OUTPUT_DIR) -> str:
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,
+        "retries": 5,
+        "extractor_retries": 5,
+        # Node.js GitHub runner par pehle se installed hai; YouTube challenge solve karne ke liye
+        "js_runtimes": {"node": {}},
+        "remote_components": ["ejs:github"],
     }
     if YT_COOKIES_FILE and os.path.exists(YT_COOKIES_FILE):
         ydl_opts["cookiefile"] = YT_COOKIES_FILE
