@@ -48,7 +48,10 @@ jobs:
       - name: Create client_secret.json
         env:
           YT_CLIENT_SECRET_JSON: ${{ secrets.YT_CLIENT_SECRET }}
-        run: printf '%s' "$YT_CLIENT_SECRET_JSON" > client_secret.json
+        run: |
+          printf '%s' "$YT_CLIENT_SECRET_JSON" > client_secret.json
+          echo "client_secret.json size (bytes): $(wc -c < client_secret.json)"
+          echo "first char: $(head -c 1 client_secret.json | od -c | head -1)"
 
       - name: Create cookies.txt (optional)
         env:
