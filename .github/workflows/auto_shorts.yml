@@ -31,7 +31,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip "setuptools<70" wheel
+          pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install --no-build-isolation openai-whisper==20231117
           pip install -r requirements.txt
 
       - name: Cache Whisper models
@@ -43,13 +45,20 @@ jobs:
       - name: Create client_secret.json
         env:
           YT_CLIENT_SECRET_JSON: ${{ secrets.YT_CLIENT_SECRET }}
-        run: echo "$YT_CLIENT_SECRET_JSON" > client_secret.json
+        run: printf '%s' "$YT_CLIENT_SECRET_JSON" > client_secret.json
+
+      - name: Create cookies.txt (optional)
+        env:
+          YT_COOKIES: ${{ secrets.YT_COOKIES }}
+        run: |
+          if [ -n "$YT_COOKIES" ]; then printf '%s' "$YT_COOKIES" > cookies.txt; fi
 
       - name: Run channel pipeline
         env:
           WHISPER_MODEL:    base
           YT_CLIENT_SECRET: client_secret.json
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_COOKIES_FILE:  cookies.txt
           CHANNEL_URL:      ${{ github.event.inputs.channel_url || secrets.CHANNEL_URL }}
         run: |
           python main.py --channel "$CHANNEL_URL" --upload
@@ -59,8 +68,7 @@ jobs:
           git config user.name "shorts-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/processed.json || true
-          git diff --quiet && git diff --staged --quiet || \
-            git commit -m "chore: update processed videos [skip ci]"
+          git diff --staged --quiet || git commit -m "chore: update processed videos [skip ci]"
           git push || true
 
       - name: Upload artifact
@@ -68,5 +76,5 @@ jobs:
         if: always()
         with:
           name: shorts-output
-          path: output/*.mp4
+          path: output/short_*.mp4
           if-no-files-found: warn
