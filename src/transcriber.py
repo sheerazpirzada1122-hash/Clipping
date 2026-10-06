@@ -21,6 +21,7 @@ def transcribe(video_path: str, model_name: str = WHISPER_MODEL) -> dict:
         language="en",
         word_timestamps=True,
         verbose=False,
+        fp16=False,
     )
 
     # Flatten word list
@@ -41,6 +42,6 @@ def transcribe(video_path: str, model_name: str = WHISPER_MODEL) -> dict:
 
     # Cache transcript
     cache_path = Path(video_path).with_suffix(".transcript.json")
-    cache_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    cache_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     print(f"[Transcriber] Saved transcript to {cache_path}")
     return payload
