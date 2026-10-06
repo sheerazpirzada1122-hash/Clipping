@@ -80,7 +80,7 @@ def run(source: str, upload: bool = False) -> str:
     # Optional: reaction banner in the first 3 seconds (hook)
     banner = workdir / "07_banner.mp4"
     add_reaction_banner(str(bar), str(banner),
-                        "WATCH THIS 👀", 0.0, 3.0)
+                        "WATCH THIS", 0.0, 3.0)
 
     rprint("[bold cyan]▶ Step 8: Captions[/bold cyan]")
     ass_path = workdir / "captions.ass"
